@@ -48,6 +48,14 @@ impl Vec3 {
     pub fn dot(&self, &rhs: &Vec3) -> f64 {
         self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
+
+    pub fn cross(&self, &rhs: &Vec3) -> Vec3 {
+        Vec3 {
+            x: self.y * rhs.z - self.z * rhs.y,
+            y: self.z * rhs.x - self.x * rhs.z,
+            z: self.x * rhs.y - self.y * rhs.x,
+        }
+    }
 }
 
 impl PartialEq for Vec3 {
@@ -204,6 +212,14 @@ mod test {
         assert_eq!(
             Vec3::new(1.0, 2.0, 2.0).dot(&Vec3::new(1.0, 2.0, 3.0)),
             11.0
+        );
+    }
+
+    #[test]
+    fn cross_product_works() {
+        assert_eq!(
+            Vec3::new(1.0, 4.0, 3.0).cross(&Vec3::new(1.0, 2.0, 3.0)),
+            Vec3::new(6.0, 0.0, -2.0)
         );
     }
 
