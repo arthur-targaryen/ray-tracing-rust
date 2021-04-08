@@ -1,5 +1,5 @@
 use std::cmp::PartialEq;
-use std::ops::Add;
+use std::ops::{Add, Neg};
 
 #[derive(Debug)]
 pub struct Vec3 {
@@ -40,6 +40,18 @@ impl PartialEq for Vec3 {
     }
 }
 
+impl Neg for Vec3 {
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Self {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
 impl Add for Vec3 {
     type Output = Self;
 
@@ -64,6 +76,11 @@ mod test {
     #[test]
     fn null_vector_is_equal_to_null_vector() {
         assert_eq!(Vec3::null(), Vec3::null());
+    }
+
+    #[test]
+    fn negation_works() {
+        assert_eq!(-Vec3::new(-1.0, -2.0, 3.0), Vec3::new(1.0, 2.0, -3.0));
     }
 
     #[test]
