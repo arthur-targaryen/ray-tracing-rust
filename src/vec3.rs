@@ -32,6 +32,14 @@ impl Vec3 {
     pub fn z(&self) -> f64 {
         self.z
     }
+
+    pub fn length_squared(&self) -> f64 {
+        self.x * self.x + self.y * self.y + self.z * self.z
+    }
+
+    pub fn length(&self) -> f64 {
+        self.length_squared().sqrt()
+    }
 }
 
 impl PartialEq for Vec3 {
@@ -100,6 +108,11 @@ mod test {
     #[test]
     fn null_vector_is_equal_to_null_vector() {
         assert_eq!(Vec3::null(), Vec3::null());
+    }
+
+    #[test]
+    fn length() {
+        assert_eq!(Vec3::new(4.0, 2.0, 4.0).length(), 6.0);
     }
 
     #[test]
