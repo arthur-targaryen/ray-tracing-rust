@@ -1,3 +1,5 @@
+use ray_tracing::color::{self, Color};
+
 fn main() {
     let image_width = 256;
     let image_height = 256;
@@ -11,11 +13,8 @@ fn main() {
             let g = j as f64 / (image_height - 1) as f64;
             let b = 0.25;
 
-            let ir = (255.999 * r) as i32;
-            let ig = (255.999 * g) as i32;
-            let ib = (255.999 * b) as i32;
-
-            println!("{} {} {}", ir, ig, ib);
+            let pxl_color = Color::new(r, g, b);
+            color::write_color(&pxl_color);
         }
     }
 
