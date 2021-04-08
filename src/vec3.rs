@@ -41,7 +41,7 @@ impl Vec3 {
         self.length_squared().sqrt()
     }
 
-    pub fn unit_vector(&self) -> Self {
+    pub fn unit_vector(&self) -> Vec3 {
         *self / self.length()
     }
 
@@ -59,13 +59,13 @@ impl Vec3 {
 }
 
 impl PartialEq for Vec3 {
-    fn eq(&self, other: &Self) -> bool {
+    fn eq(&self, other: &Vec3) -> bool {
         self.x == other.x && self.y == other.y && self.z == other.z
     }
 }
 
 impl Neg for Vec3 {
-    type Output = Self;
+    type Output = Vec3;
 
     fn neg(self) -> Self {
         Self {
