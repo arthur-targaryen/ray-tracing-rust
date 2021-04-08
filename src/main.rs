@@ -1,4 +1,6 @@
-use ray_tracing::color::{self, Color};
+use std::io;
+
+use ray_tracing::color::Color;
 
 fn main() {
     let image_width = 256;
@@ -14,7 +16,9 @@ fn main() {
             let b = 0.25;
 
             let pxl_color = Color::new(r, g, b);
-            color::write_color(&pxl_color);
+            pxl_color
+                .write(&mut io::stdout())
+                .expect("There was an error trying to write the image to the standard output");
         }
     }
 
