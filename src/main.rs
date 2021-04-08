@@ -17,7 +17,7 @@ fn main() {
 
             let pxl_color = Color::new(r, g, b);
             pxl_color
-                .write(&mut io::stdout())
+                .write(io::stdout())
                 .expect("There was an error trying to write the image to the standard output");
         }
     }

@@ -5,7 +5,7 @@ use super::vec3;
 pub type Color = vec3::Vec3;
 
 impl Color {
-    pub fn write(&self, stream: &mut impl Write) -> std::io::Result<()> {
+    pub fn write(&self, mut stream: impl Write) -> std::io::Result<()> {
         writeln!(
             stream,
             "{} {} {}",
