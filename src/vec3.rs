@@ -1,5 +1,5 @@
 use std::cmp::PartialEq;
-use std::ops::{Add, AddAssign, DivAssign, MulAssign, Neg};
+use std::ops::{Add, AddAssign, DivAssign, Mul, MulAssign, Neg};
 
 #[derive(Debug)]
 pub struct Vec3 {
@@ -80,6 +80,42 @@ impl AddAssign for Vec3 {
     }
 }
 
+impl Mul<Vec3> for Vec3 {
+    type Output = Self;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        Self {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z,
+        }
+    }
+}
+
+impl Mul<f64> for Vec3 {
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        Self::Output {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
+        }
+    }
+}
+
 impl MulAssign<f64> for Vec3 {
     fn mul_assign(&mut self, rhs: f64) {
         self.x *= rhs;
@@ -133,6 +169,24 @@ mod test {
         let mut v = Vec3::new(1.0, 2.0, 3.0);
         v += Vec3::new(1.0, 2.0, 3.0);
         assert_eq!(v, Vec3::new(2.0, 4.0, 6.0))
+    }
+
+    #[test]
+    fn mul_with_vec3_works() {
+        assert_eq!(
+            Vec3::new(1.0, 2.0, 3.0) * Vec3::new(1.0, 2.0, 3.0),
+            Vec3::new(1.0, 4.0, 9.0)
+        );
+    }
+
+    #[test]
+    fn mul_vec3_with_f64_works() {
+        assert_eq!(Vec3::new(1.0, 2.0, 3.0) * 2.0, Vec3::new(2.0, 4.0, 6.0));
+    }
+
+    #[test]
+    fn mul_f64_with_vec3_works() {
+        assert_eq!(2.0 * Vec3::new(1.0, 2.0, 3.0), Vec3::new(2.0, 4.0, 6.0));
     }
 
     #[test]
