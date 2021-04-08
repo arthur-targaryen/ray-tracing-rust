@@ -1,5 +1,5 @@
 use std::cmp::PartialEq;
-use std::ops::{Add, AddAssign, DivAssign, Mul, MulAssign, Neg};
+use std::ops::{Add, AddAssign, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 #[derive(Debug)]
 pub struct Vec3 {
@@ -77,6 +77,26 @@ impl AddAssign for Vec3 {
         self.x += rhs.x;
         self.y += rhs.y;
         self.z += rhs.z;
+    }
+}
+
+impl Sub for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl SubAssign for Vec3 {
+    fn sub_assign(&mut self, rhs: Self) {
+        self.x -= rhs.x;
+        self.y -= rhs.y;
+        self.z -= rhs.z;
     }
 }
 
@@ -169,6 +189,21 @@ mod test {
         let mut v = Vec3::new(1.0, 2.0, 3.0);
         v += Vec3::new(1.0, 2.0, 3.0);
         assert_eq!(v, Vec3::new(2.0, 4.0, 6.0))
+    }
+
+    #[test]
+    fn sub_vec3_with_vec3_works() {
+        assert_eq!(
+            Vec3::new(2.0, 4.0, 6.0) - Vec3::new(1.0, 2.0, 3.0),
+            Vec3::new(1.0, 2.0, 3.0)
+        );
+    }
+
+    #[test]
+    fn sub_assign_vec3_with_vec3_works() {
+        let mut v = Vec3::new(2.0, 4.0, 6.0);
+        v -= Vec3::new(1.0, 2.0, 3.0);
+        assert_eq!(v, Vec3::new(1.0, 2.0, 3.0));
     }
 
     #[test]
