@@ -1,5 +1,5 @@
 use std::cmp::PartialEq;
-use std::ops::{Add, AddAssign, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 #[derive(Debug)]
 pub struct Vec3 {
@@ -144,6 +144,18 @@ impl MulAssign<f64> for Vec3 {
     }
 }
 
+impl Div<f64> for Vec3 {
+    type Output = Self;
+
+    fn div(self, rhs: f64) -> Self::Output {
+        Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
 impl DivAssign<f64> for Vec3 {
     fn div_assign(&mut self, rhs: f64) {
         self.x /= rhs;
@@ -229,6 +241,11 @@ mod test {
         let mut v = Vec3::new(1.0, 2.0, 3.0);
         v *= 2.0;
         assert_eq!(v, Vec3::new(2.0, 4.0, 6.0))
+    }
+
+    #[test]
+    fn div_vec3_by_f64_works() {
+        assert_eq!(Vec3::new(2.0, 4.0, 6.0) / 2.0, Vec3::new(1.0, 2.0, 3.0));
     }
 
     #[test]
