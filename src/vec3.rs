@@ -1,7 +1,7 @@
 use std::cmp::PartialEq;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Vec3 {
     x: f64,
     y: f64,
@@ -39,6 +39,14 @@ impl Vec3 {
 
     pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
+    }
+
+    pub fn unit_vector(&self) -> Self {
+        *self / self.length()
+    }
+
+    pub fn dot(&self, &rhs: &Vec3) -> f64 {
+        self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
 }
 
@@ -181,6 +189,22 @@ mod test {
     #[test]
     fn length() {
         assert_eq!(Vec3::new(4.0, 2.0, 4.0).length(), 6.0);
+    }
+
+    #[test]
+    fn unit_vector_works() {
+        assert_eq!(
+            Vec3::new(4.0, 2.0, 4.0).unit_vector(),
+            Vec3::new(4.0 / 6.0, 2.0 / 6.0, 4.0 / 6.0)
+        );
+    }
+
+    #[test]
+    fn dot_product_works() {
+        assert_eq!(
+            Vec3::new(1.0, 2.0, 2.0).dot(&Vec3::new(1.0, 2.0, 3.0)),
+            11.0
+        );
     }
 
     #[test]
