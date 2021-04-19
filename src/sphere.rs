@@ -16,11 +16,11 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn try_hit(&self, r: &Ray, valid_range: RangeInclusive<f64>) -> Option<HitRecord> {
-        let oc = r.origin() - self.center;
+    fn try_hit(&self, ray: &Ray, valid_range: RangeInclusive<f64>) -> Option<HitRecord> {
+        let oc = ray.origin() - self.center;
 
-        let a = r.direction().length_squared();
-        let half_b = oc.dot(&r.direction());
+        let a = ray.direction().length_squared();
+        let half_b = oc.dot(&ray.direction());
         let c = oc.length_squared() - self.radius * self.radius;
         let discriminant = (half_b * half_b) - a * c;
 
@@ -40,9 +40,9 @@ impl Hittable for Sphere {
         }
 
         Some(HitRecord::new(
+            ray,
             root,
-            (r.at(root) - self.center) / self.radius,
-            r,
+            (ray.at(root) - self.center) / self.radius,
         ))
     }
 }
