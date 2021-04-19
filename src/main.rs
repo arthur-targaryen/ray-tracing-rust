@@ -1,7 +1,11 @@
 use std::io;
 
-use ray_tracing::ray::Ray;
-use ray_tracing::vec3::{Point3, Vec3};
+use ray::Ray;
+use vec3::{Point3, Vec3};
+
+mod color;
+mod ray;
+mod vec3;
 
 fn main() {
     // Image
