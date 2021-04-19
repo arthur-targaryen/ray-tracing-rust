@@ -1,7 +1,11 @@
 use std::io;
 
-use ray_tracing::ray::Ray;
-use ray_tracing::vec3::{Point3, Vec3};
+use ray::Ray;
+use vec3::{Point3, Vec3};
+
+mod color;
+mod ray;
+mod vec3;
 
 fn main() {
     // Image
@@ -14,7 +18,7 @@ fn main() {
     let viewport_width = aspect_ratio * viewport_height;
     let focal_length = 1.0;
 
-    let origin = Point3::null();
+    let origin = Point3::zero();
     let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
     let lower_left_corner =

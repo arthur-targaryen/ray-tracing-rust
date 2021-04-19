@@ -15,7 +15,7 @@ impl Vec3 {
         Vec3 { x, y, z }
     }
 
-    pub fn null() -> Vec3 {
+    pub fn zero() -> Vec3 {
         Vec3 {
             x: 0.0,
             y: 0.0,
@@ -43,7 +43,7 @@ impl Vec3 {
         self.length_squared().sqrt()
     }
 
-    pub fn unit_vector(&self) -> Vec3 {
+    pub fn normalized(&self) -> Vec3 {
         *self / self.length()
     }
 
@@ -188,12 +188,12 @@ mod test {
 
     #[test]
     fn partial_eq_works_with_not_equals_vec3() {
-        assert_ne!(Vec3::new(1.0, 2.0, 3.0), Vec3::null());
+        assert_ne!(Vec3::new(1.0, 2.0, 3.0), Vec3::zero());
     }
 
     #[test]
     fn partial_eq_works_with_equals_vec3() {
-        assert_eq!(Vec3::null(), Vec3::null());
+        assert_eq!(Vec3::zero(), Vec3::zero());
     }
 
     #[test]
@@ -202,9 +202,9 @@ mod test {
     }
 
     #[test]
-    fn unit_vector_works() {
+    fn normalized_works() {
         assert_eq!(
-            Vec3::new(4.0, 2.0, 4.0).unit_vector(),
+            Vec3::new(4.0, 2.0, 4.0).normalized(),
             Vec3::new(4.0 / 6.0, 2.0 / 6.0, 4.0 / 6.0)
         );
     }
