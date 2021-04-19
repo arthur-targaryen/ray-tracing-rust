@@ -28,15 +28,15 @@ impl Ray {
     fn hit_sphere(&self, center: &Point3, radius: f64) -> f64 {
         let oc = self.origin() - *center;
 
-        let a = self.direction.dot(&self.direction);
-        let b = 2.0 * oc.dot(&self.direction);
-        let c = oc.dot(&oc) - radius * radius;
-        let discriminant = b * b - 4.0 * a * c;
+        let a = self.direction.length_squared();
+        let half_b = oc.dot(&self.direction);
+        let c = oc.length_squared() - radius * radius;
+        let discriminant = (half_b * half_b) - a * c;
 
         if discriminant < 0.0 {
             -1.0
         } else {
-            (-b - discriminant.sqrt()) / (2.0 * a)
+            (-half_b - discriminant.sqrt()) / a
         }
     }
 
