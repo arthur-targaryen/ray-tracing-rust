@@ -26,7 +26,7 @@ impl Ray {
     }
 
     pub fn color(&self, world: &dyn Hittable) -> Color {
-        if let Some(hit) = world.try_hit(self, 0.0, f64::INFINITY) {
+        if let Some(hit) = world.try_hit(self, 0.0..=f64::INFINITY) {
             return 0.5 * (hit.normal + Color::new(1.0, 1.0, 1.0));
         }
 

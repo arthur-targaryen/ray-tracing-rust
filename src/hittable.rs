@@ -1,3 +1,5 @@
+use std::ops::RangeInclusive;
+
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
@@ -21,6 +23,5 @@ impl HitRecord {
 }
 
 pub trait Hittable {
-    // TODO: Use some kind of range for t_min and t_max
-    fn try_hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
+    fn try_hit(&self, r: &Ray, valid_range: RangeInclusive<f64>) -> Option<HitRecord>;
 }
