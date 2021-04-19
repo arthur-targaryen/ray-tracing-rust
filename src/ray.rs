@@ -42,8 +42,8 @@ impl Ray {
             return Color::new(1.0, 0.0, 0.0);
         }
 
-        let unit_direction = self.direction.unit_vector();
-        let t = 0.5 * (unit_direction.y() + 1.0);
+        let normalized_direction = self.direction.normalized();
+        let t = 0.5 * (normalized_direction.y() + 1.0);
         (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(1.0, 0.7, 0.5)
     }
 }
