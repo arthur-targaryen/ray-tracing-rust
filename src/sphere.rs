@@ -39,18 +39,10 @@ impl Hittable for Sphere {
             }
         }
 
-        let p = r.at(root);
-        let mut record = HitRecord {
-            t: root,
-            p,
-            normal: (p - self.center) / self.radius,
-            front_face: false,
-        };
-
-        let outward_normal = (p - self.center) / self.radius;
-
-        record.set_face_normal(r, &outward_normal);
-
-        Some(record)
+        Some(HitRecord::new(
+            root,
+            (r.at(root) - self.center) / self.radius,
+            r,
+        ))
     }
 }

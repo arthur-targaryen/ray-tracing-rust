@@ -12,12 +12,19 @@ pub struct HitRecord {
 }
 
 impl HitRecord {
-    pub fn set_face_normal(&mut self, r: &Ray, outward_normal: &Vec3) {
-        self.front_face = r.direction().dot(outward_normal) < 0.0;
-        self.normal = if self.front_face {
-            *outward_normal
+    pub fn new(t: f64, outward_normal: Vec3, hitting_ray: &Ray) -> HitRecord {
+        let front_face = hitting_ray.direction().dot(&outward_normal) < 0.0;
+        let normal = if front_face {
+            outward_normal
         } else {
-            -(*outward_normal)
+            -outward_normal
+        };
+
+        HitRecord {
+            p: hitting_ray.at(t),
+            normal,
+            t,
+            front_face,
         }
     }
 }
