@@ -41,7 +41,7 @@ impl Ray {
         }
 
         if let Some(hit) = world.try_hit(self, 0.001..=f64::INFINITY) {
-            let target = hit.intersection_point + hit.normal + Vec3::random_in_unit_sphere();
+            let target = hit.intersection_point + hit.normal + Vec3::random_normalized();
             // Recurse to reflects off the light.
             return 0.5
                 * Ray::new(hit.intersection_point, target - hit.intersection_point)
