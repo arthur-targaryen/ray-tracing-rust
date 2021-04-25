@@ -40,7 +40,7 @@ impl Ray {
             return Color::zero();
         }
 
-        if let Some(hit) = world.try_hit(self, 0.0..=f64::INFINITY) {
+        if let Some(hit) = world.try_hit(self, 0.001..=f64::INFINITY) {
             let target = hit.intersection_point + hit.normal + Vec3::random_in_unit_sphere();
             // Recurse to reflects off the light.
             return 0.5
