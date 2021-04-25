@@ -24,6 +24,7 @@ fn main() {
     let image_width = 400;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
     let samples_per_pixel: u32 = 100;
+    let max_depth = 50;
 
     // World
     let mut world = HittableCollection::new();
@@ -45,7 +46,7 @@ fn main() {
                 let u = (i as f64 + random()) / (image_width - 1) as f64;
                 let v = (j as f64 + random()) / (image_height - 1) as f64;
                 let r = camera.ray_to(u, v);
-                pixel_color += r.color(&world);
+                pixel_color += r.color(&world, max_depth);
             }
 
             pixel_color

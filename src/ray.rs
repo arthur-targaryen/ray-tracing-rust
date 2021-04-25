@@ -35,9 +35,17 @@ impl Ray {
     /// This will try to hit anything in the `world`.
     /// If nothing can be hit, returns a blue-to-white gradient depending on ray
     /// Y coordinate.
-    pub fn color(&self, world: &dyn Hittable) -> Color {
+    pub fn color(&self, world: &dyn Hittable, depth: u32) -> Color {
+        if depth == 0 {
+            return Color::zero();
+        }
+
         if let Some(hit) = world.try_hit(self, 0.0..=f64::INFINITY) {
-            return 0.5 * (hit.normal + Color::new(1.0, 1.0, 1.0));
+            let target = hit.intersection_point + hit.normal + Vec3::random_in_unit_sphere();
+            // Recurse to reflects off the light.
+            return 0.5
+                * Ray::new(hit.intersection_point, target - hit.intersection_point)
+                    .color(world, depth - 1);
         }
 
         let unit_direction = self.direction().normalized();
