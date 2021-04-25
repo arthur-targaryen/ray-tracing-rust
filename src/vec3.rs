@@ -1,5 +1,7 @@
 use std::cmp::PartialEq;
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Range, Sub, SubAssign};
+
+use super::random;
 
 /// A 3-dimensional vector.
 #[derive(Debug, Copy, Clone)]
@@ -18,7 +20,7 @@ impl Vec3 {
         Vec3 { x, y, z }
     }
 
-    /// Construct the zero vector.
+    /// Constructs the zero vector.
     ///
     /// Zero vector is a vector of length 0 and whose components are all 0.
     pub fn zero() -> Vec3 {
@@ -27,6 +29,36 @@ impl Vec3 {
             y: 0.0,
             z: 0.0,
         }
+    }
+
+    /// Constructs a random vector.
+    pub fn random() -> Vec3 {
+        Vec3 {
+            x: random::random(),
+            y: random::random(),
+            z: random::random(),
+        }
+    }
+
+    /// Constructs a random vector whose components are all in the given range.
+    pub fn random_range(range: Range<f64>) -> Vec3 {
+        Vec3 {
+            x: random::random_range(range.clone()),
+            y: random::random_range(range.clone()),
+            z: random::random_range(range),
+        }
+    }
+
+    /// Constructs a random vector inside a unit radius sphere.
+    pub fn random_in_unit_sphere() -> Vec3 {
+        let range = -1.0..1.0;
+
+        let mut vector = Vec3::random_range(range.clone());
+        while vector.length_squared() >= 1.0 {
+            vector = Vec3::random_range(range.clone());
+        }
+
+        vector
     }
 
     pub fn x(&self) -> f64 {
