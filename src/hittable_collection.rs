@@ -23,6 +23,7 @@ impl HittableCollection {
     }
 
     /// Clears the collection, removing all hittables.
+    #[allow(dead_code)]
     pub fn clear(&mut self) {
         self.objects.clear();
     }
