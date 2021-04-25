@@ -3,14 +3,14 @@ repos:
     rev: v0.15.0
     hooks:
       - id: gitlint
-        args: [--contrib=CT1, --ignore=B6, --msg-filename]
+        args: [ --contrib=CT1, --ignore=B6, --msg-filename ]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
       - id: trailing-whitespace
         exclude: ^tests/
       - id: check-yaml
-        args: [--allow-multiple-documents]
+        args: [ --allow-multiple-documents ]
         files: \.(yaml|yml)
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 2.1.4
