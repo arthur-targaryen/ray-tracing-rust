@@ -4,12 +4,12 @@ use std::rc::Rc;
 use ray::Ray;
 use vec3::{Point3, Vec3};
 
-use crate::hittable_list::HittableCollection;
+use crate::hittable_collection::HittableCollection;
 use crate::sphere::Sphere;
 
 mod color;
 mod hittable;
-mod hittable_list;
+mod hittable_collection;
 mod ray;
 mod sphere;
 mod vec3;

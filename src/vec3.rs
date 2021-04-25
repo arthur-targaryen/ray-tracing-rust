@@ -1,6 +1,7 @@
 use std::cmp::PartialEq;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
+/// A 3-dimensional vector.
 #[derive(Debug, Copy, Clone)]
 pub struct Vec3 {
     x: f64,
@@ -8,13 +9,18 @@ pub struct Vec3 {
     z: f64,
 }
 
+/// Aliases of [`Vec3`] representing an 3-D point.
 pub type Point3 = Vec3;
 
 impl Vec3 {
+    /// Constructs a new `Vec3`.
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 { x, y, z }
     }
 
+    /// Construct the zero vector.
+    ///
+    /// Zero vector is a vector of length 0 and whose components are all 0.
     pub fn zero() -> Vec3 {
         Vec3 {
             x: 0.0,
@@ -39,18 +45,24 @@ impl Vec3 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
 
+    /// Returns the length of the vector using Euclidian norm.
     pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
     }
 
+    /// Returns the normalized vector.
     pub fn normalized(&self) -> Vec3 {
         *self / self.length()
     }
 
+    /// Returns the dot product of the vector with another.
+    /// See [dot product on Wikipedia](https://en.wikipedia.org/wiki/Dot_product).
     pub fn dot(&self, &rhs: &Vec3) -> f64 {
         self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
 
+    /// Returns the cross product of the vector with another.
+    /// See [cross product on Wikipedia](https://en.wikipedia.org/wiki/Cross_product).
     pub fn cross(&self, &rhs: &Vec3) -> Vec3 {
         Vec3 {
             x: self.y * rhs.z - self.z * rhs.y,

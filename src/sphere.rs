@@ -10,6 +10,7 @@ pub struct Sphere {
 }
 
 impl Sphere {
+    /// Constructs a new `Sphere`.
     pub fn new(center: Point3, radius: f64) -> Sphere {
         Sphere { center, radius }
     }
