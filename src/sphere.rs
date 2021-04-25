@@ -47,3 +47,40 @@ impl Hittable for Sphere {
         ))
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::vec3::Vec3;
+
+    #[test]
+    fn try_hit_sphere_with_not_hitting_ray() {
+        let sphere = Sphere::new(Point3::new(1.0, 1.0, 1.0), 0.5);
+        let ray = Ray::new(Point3::new(-1.0, -1.0, -1.0), Vec3::new(-1.0, -1.0, -1.0));
+
+        assert!(sphere.try_hit(&ray, 0.0..=f64::INFINITY).is_none());
+    }
+
+    #[test]
+    fn try_hit_sphere_with_hitting_ray_not_in_range() {
+        let sphere = Sphere::new(Point3::new(3.0, 0.0, 0.0), 1.0);
+        let ray = Ray::new(Point3::new(1.0, 0.0, 0.0), Vec3::new(1.0, 0.0, 0.0));
+
+        assert!(sphere.try_hit(&ray, 0.0..=0.5).is_none());
+    }
+
+    #[test]
+    fn try_hit_sphere_with_hitting_ray_in_range() {
+        let sphere = Sphere::new(Point3::new(3.0, 0.0, 0.0), 1.0);
+        let ray = Ray::new(Point3::new(1.0, 0.0, 0.0), Vec3::new(1.0, 0.0, 0.0));
+
+        let result = sphere
+            .try_hit(&ray, 0.0..=2.0)
+            .expect("ray should hit sphere");
+
+        assert_eq!(result.intersection_point, Point3::new(2.0, 0.0, 0.0));
+        assert_eq!(result.t, 1.0);
+        assert_eq!(result.normal, Vec3::new(-1.0, 0.0, 0.0));
+        assert!(result.front_face);
+    }
+}
