@@ -46,7 +46,7 @@ impl HitRecord {
 
 /// An object that can be hit.
 pub trait Hittable {
-    /// Try to hit an object with a ray. The intersection point must be in the
+    /// Tries to hit an object with a ray. The intersection point must be in the
     /// `valid_range`.
     fn try_hit(&self, r: &Ray, valid_range: RangeInclusive<f64>) -> Option<HitRecord>;
 }

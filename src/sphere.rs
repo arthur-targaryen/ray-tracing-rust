@@ -17,6 +17,9 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
+    /// Tries to hit a sphere with a ray. The intersection point must be in the
+    /// `valid_range`.
+    /// See [Line-sphere intersection on Wikipedia](https://en.wikipedia.org/wiki/Line–sphere_intersection).
     fn try_hit(&self, ray: &Ray, valid_range: RangeInclusive<f64>) -> Option<HitRecord> {
         let oc = ray.origin() - self.center;
 
