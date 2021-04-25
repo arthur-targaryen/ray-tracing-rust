@@ -61,6 +61,13 @@ impl Vec3 {
         vector
     }
 
+    /// Constructs a normalized random vector inside a unit radius sphere.
+    ///
+    /// This is a shortcut for `Vec3::random_in_unit_sphere().normalized()`.
+    pub fn random_normalized() -> Vec3 {
+        Vec3::random_in_unit_sphere().normalized()
+    }
+
     pub fn x(&self) -> f64 {
         self.x
     }
