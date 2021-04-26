@@ -4,7 +4,7 @@ use super::Material;
 
 /// A simple diffuse material.
 pub struct Lambertian {
-    pub albedo: Color,
+    albedo: Color,
 }
 
 impl Lambertian {
