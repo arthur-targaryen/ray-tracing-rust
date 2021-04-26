@@ -25,11 +25,20 @@ impl Material for Dielectrics {
         };
 
         let unit_direction = ray_in.direction().normalized();
-        let refracted = unit_direction.refracted(&record.normal, refraction_ratio);
+
+        let cos_theta = -unit_direction.dot(&record.normal).min(1.0);
+        let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
+
+        let can_recraft = refraction_ratio * sin_theta <= 1.0;
+        let direction = if can_recraft {
+            unit_direction.refracted(&record.normal, refraction_ratio)
+        } else {
+            unit_direction.reflected(&record.normal)
+        };
 
         Some((
             Color::new(1.0, 1.0, 1.0),
-            Ray::new(record.intersection_point, refracted),
+            Ray::new(record.intersection_point, direction),
         ))
     }
 }
