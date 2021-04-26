@@ -102,6 +102,8 @@ impl Vec3 {
         *self / self.length()
     }
 
+    /// Returns the reflected vector after intersecting with a surface, `n`
+    /// being the surface normal.
     pub fn reflected(&self, n: &Vec3) -> Vec3 {
         *self - 2.0 * self.dot(n) * *n
     }

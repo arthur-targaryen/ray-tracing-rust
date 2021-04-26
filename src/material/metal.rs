@@ -2,6 +2,7 @@ use crate::{color::Color, hittable::HitRecord, ray::Ray};
 
 use super::Material;
 
+/// A material that reflects an incoming ray.
 pub struct Metal {
     pub albedo: Color,
 }

@@ -2,6 +2,7 @@ use crate::{color::Color, hittable::HitRecord, ray::Ray, vec3::Vec3};
 
 use super::Material;
 
+/// A simple diffuse material.
 pub struct Lambertian {
     pub albedo: Color,
 }
