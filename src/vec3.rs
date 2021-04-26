@@ -89,9 +89,19 @@ impl Vec3 {
         self.length_squared().sqrt()
     }
 
+    /// Returns true if the vector is close to zero in all dimensions.
+    pub fn is_near_zero(&self) -> bool {
+        const EPSILON: f64 = 1e-8;
+        self.x.abs() < EPSILON && self.y.abs() < EPSILON && self.z.abs() < EPSILON
+    }
+
     /// Returns the normalized vector.
     pub fn normalized(&self) -> Vec3 {
         *self / self.length()
+    }
+
+    pub fn reflected(&self, n: &Vec3) -> Vec3 {
+        *self - 2.0 * self.dot(n) * *n
     }
 
     /// Returns the dot product of the vector with another.
@@ -253,10 +263,28 @@ mod test {
     }
 
     #[test]
+    fn is_near_zero_works_with_large_vec3() {
+        assert!(!Vec3::new(8.0, 8.0, 8.0).is_near_zero());
+    }
+
+    #[test]
+    fn is_near_zero_works_with_near_zero_vec3() {
+        assert!(!Vec3::new(0.0, 1e-8, 8.0).is_near_zero());
+    }
+
+    #[test]
     fn normalized_works() {
         assert_eq!(
             Vec3::new(4.0, 2.0, 4.0).normalized(),
             Vec3::new(4.0 / 6.0, 2.0 / 6.0, 4.0 / 6.0)
+        );
+    }
+
+    #[test]
+    fn reflected_works() {
+        assert_eq!(
+            Vec3::new(2.0, -2.0, 0.0).reflected(&Vec3::new(0.0, 1.0, 0.0)),
+            Vec3::new(2.0, 2.0, 0.0)
         );
     }
 
