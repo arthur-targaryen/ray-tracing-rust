@@ -18,23 +18,28 @@ impl Camera {
     ///
     /// The aspect ratio is 16:9, the viewport height is 2.0 and the focal
     /// length is 1.0. Camera center is at the origin (0, 0, 0).
-    pub fn new(vertical_fov: f64, aspect_ratio: f64) -> Camera {
+    pub fn new(
+        look_from: Point3,
+        look_at: Point3,
+        vup: Vec3,
+        vertical_fov: f64,
+        aspect_ratio: f64,
+    ) -> Camera {
         let theta = vertical_fov.to_radians();
         let h = (theta / 2.0).tan();
         let viewport_height = 2.0 * h;
         let viewport_width = aspect_ratio * viewport_height;
 
-        let focal_length = 1.0;
+        let w = (look_from - look_at).normalized();
+        let u = vup.cross(&w).normalized();
+        let v = w.cross(&u);
 
-        let origin = Point3::zero();
-        let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
-        let vertical = Vec3::new(0.0, viewport_height, 0.0);
+        let origin = look_from;
+        let horizontal = viewport_width * u;
+        let vertical = viewport_height * v;
         Camera {
             origin,
-            lower_left_corner: origin
-                - horizontal / 2.0
-                - vertical / 2.0
-                - Vec3::new(0.0, 0.0, focal_length),
+            lower_left_corner: origin - horizontal / 2.0 - vertical / 2.0 - w,
             horizontal,
             vertical,
         }
