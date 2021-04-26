@@ -1,4 +1,4 @@
-use super::material::Material;
+use super::Material;
 
 use crate::color::Color;
 use crate::hittable::HitRecord;

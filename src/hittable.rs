@@ -1,11 +1,11 @@
-use std::ops::RangeInclusive;
+use std::{ops::RangeInclusive, rc::Rc};
 
+use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
 /// An `HitRecord` is the result of a [`Ray`] hitting an [`Hittable`].
-#[derive(Debug)]
-pub struct HitRecord {
+pub struct HitRecord<'a> {
     /// The point where the intersecting ray meets the hittable.
     pub intersection_point: Point3,
     /// The distance between the point of intersection and the intersecting ray
@@ -17,9 +17,11 @@ pub struct HitRecord {
     /// Whether the intersecting ray met the hittable from the outside (i.e.
     /// [`HitRecord::front_face`] is `true`) or the inside.
     pub front_face: bool,
+    /// The material of the hit face.
+    pub material: Rc<dyn Material + 'a>,
 }
 
-impl HitRecord {
+impl<'a> HitRecord<'a> {
     /// Constructs a new `HitRecord`.
     ///
     /// The record is the intersection between the `hitting_ray`, at `t` from
@@ -27,7 +29,13 @@ impl HitRecord {
     /// `outward_normal` is a vector that is perpendicular to the surface at the
     /// point of intersection. In our case, it always point “outward” from the
     /// surface of the `Hittable`.
-    pub fn new(hitting_ray: &Ray, t: f64, outward_normal: Vec3) -> HitRecord {
+    /// `material` is the material hit by the ray.
+    pub fn new(
+        hitting_ray: &Ray,
+        t: f64,
+        outward_normal: Vec3,
+        material: Rc<dyn Material + 'a>,
+    ) -> HitRecord<'a> {
         let front_face = hitting_ray.direction().dot(&outward_normal) < 0.0;
         let normal = if front_face {
             outward_normal
@@ -40,6 +48,7 @@ impl HitRecord {
             normal,
             t,
             front_face,
+            material,
         }
     }
 }

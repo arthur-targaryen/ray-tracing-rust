@@ -41,11 +41,11 @@ impl Ray {
         }
 
         if let Some(hit) = world.try_hit(self, 0.001..=f64::INFINITY) {
-            let target = hit.intersection_point + hit.normal + Vec3::random_normalized();
-            // Recurse to reflects off the light.
-            return 0.5
-                * Ray::new(hit.intersection_point, target - hit.intersection_point)
-                    .color(world, depth - 1);
+            if let Some((attenuation, scattered)) = hit.material.scatter(self, &hit) {
+                return attenuation * scattered.color(world, depth - 1);
+            }
+
+            return Color::zero();
         }
 
         let unit_direction = self.direction().normalized();

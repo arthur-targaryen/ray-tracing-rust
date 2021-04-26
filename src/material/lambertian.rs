@@ -1,4 +1,4 @@
-use super::material::Material;
+use super::Material;
 
 use crate::color::Color;
 use crate::hittable::HitRecord;
@@ -17,7 +17,7 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, ray_in: &Ray, record: &HitRecord) -> Option<(Color, Ray)> {
+    fn scatter(&self, _ray_in: &Ray, record: &HitRecord) -> Option<(Color, Ray)> {
         let mut scatter_direction = record.normal + Vec3::random_normalized();
 
         if scatter_direction.is_near_zero() {
