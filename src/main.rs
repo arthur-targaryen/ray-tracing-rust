@@ -6,18 +6,15 @@ use color::Color;
 use random::*;
 use vec3::Point3;
 
-use crate::hittable_collection::HittableCollection;
+use crate::hittable::{HittableCollection, Sphere};
 use crate::material::{Lambertian, Material, Metal};
-use crate::sphere::Sphere;
 
 mod camera;
 mod color;
 mod hittable;
-mod hittable_collection;
 mod material;
 mod random;
 mod ray;
-mod sphere;
 mod vec3;
 
 fn main() {

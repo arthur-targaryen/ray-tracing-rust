@@ -1,11 +1,9 @@
 use std::{ops::RangeInclusive, rc::Rc};
 
+use super::{HitRecord, Hittable};
+use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec3::Point3;
-use crate::{
-    hittable::{HitRecord, Hittable},
-    material::Material,
-};
 
 pub struct Sphere<'a> {
     center: Point3,

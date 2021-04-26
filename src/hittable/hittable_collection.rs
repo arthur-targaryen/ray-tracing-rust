@@ -1,7 +1,7 @@
 use std::ops::RangeInclusive;
 use std::rc::Rc;
 
-use crate::hittable::{HitRecord, Hittable};
+use super::{HitRecord, Hittable};
 use crate::ray::Ray;
 
 /// Stores a list of `hittable::Hittable`.

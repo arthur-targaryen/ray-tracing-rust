@@ -1,5 +1,11 @@
 use std::{ops::RangeInclusive, rc::Rc};
 
+mod hittable_collection;
+mod sphere;
+
+pub use hittable_collection::HittableCollection;
+pub use sphere::Sphere;
+
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
