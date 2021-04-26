@@ -113,7 +113,7 @@ impl Vec3 {
     /// material.
     ///
     /// See [Sneel's law on Wikipedia](https://en.wikipedia.org/wiki/Snell%27s_law).
-    pub fn refract(&self, n: &Vec3, eta: f64) -> Vec3 {
+    pub fn refracted(&self, n: &Vec3, eta: f64) -> Vec3 {
         let cos_theta = (-*self).dot(n).min(1.0);
         let ray_out_perp = eta * (*self + cos_theta * *n);
         let ray_out_parallel = -(1.0 - ray_out_perp.length_squared()).abs().sqrt() * *n;

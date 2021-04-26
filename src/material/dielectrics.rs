@@ -25,7 +25,7 @@ impl Material for Dielectrics {
         };
 
         let unit_direction = ray_in.direction().normalized();
-        let refracted = unit_direction.refract(&record.normal, refraction_ratio);
+        let refracted = unit_direction.refracted(&record.normal, refraction_ratio);
 
         Some((
             Color::new(1.0, 1.0, 1.0),
