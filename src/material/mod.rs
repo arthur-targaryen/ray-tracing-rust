@@ -1,8 +1,10 @@
+pub use dielectrics::Dielectrics;
 pub use lambertian::Lambertian;
 pub use metal::Metal;
 
 use crate::{color::Color, hittable::HitRecord, ray::Ray};
 
+mod dielectrics;
 mod lambertian;
 mod metal;
 
