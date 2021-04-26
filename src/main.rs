@@ -1,5 +1,4 @@
-use std::io;
-use std::rc::Rc;
+use std::{f64, io, rc::Rc};
 
 use camera::Camera;
 use color::Color;
@@ -25,9 +24,25 @@ fn main() {
     let max_depth = 50;
 
     // World
+    let r = (f64::consts::PI / 4.0).cos();
     let mut world = HittableCollection::new();
 
-    let material_ground = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
+    let material_left = Rc::new(Lambertian::new(Color::new(0.0, 0.0, 1.0)));
+    let material_right = Rc::new(Lambertian::new(Color::new(1.0, 0.0, 0.0)));
+
+    world.add(Rc::new(Sphere::new(
+        Point3::new(-r, 0.0, -1.0),
+        r,
+        Rc::clone(&material_left) as Rc<dyn Material>,
+    )));
+
+    world.add(Rc::new(Sphere::new(
+        Point3::new(r, 0.0, -1.0),
+        r,
+        Rc::clone(&material_right) as Rc<dyn Material>,
+    )));
+
+    /*let material_ground = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
     let material_center = Rc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5)));
     let material_left = Rc::new(Dielectrics::new(1.5));
     let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
@@ -56,10 +71,10 @@ fn main() {
         Point3::new(1.0, 0.0, -1.0),
         0.5,
         Rc::clone(&material_right) as Rc<dyn Material>,
-    )));
+    )));*/
 
     // Camera
-    let camera = Camera::new();
+    let camera = Camera::new(90.0, aspect_ratio);
 
     // Render
     println!("P3\n{} {}\n255", image_width, image_height);

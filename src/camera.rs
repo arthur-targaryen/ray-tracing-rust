@@ -18,10 +18,12 @@ impl Camera {
     ///
     /// The aspect ratio is 16:9, the viewport height is 2.0 and the focal
     /// length is 1.0. Camera center is at the origin (0, 0, 0).
-    pub fn new() -> Camera {
-        let aspect_ratio = 16.0 / 9.0;
-        let viewport_height = 2.0;
+    pub fn new(vertical_fov: f64, aspect_ratio: f64) -> Camera {
+        let theta = vertical_fov.to_radians();
+        let h = (theta / 2.0).tan();
+        let viewport_height = 2.0 * h;
         let viewport_width = aspect_ratio * viewport_height;
+
         let focal_length = 1.0;
 
         let origin = Point3::zero();
