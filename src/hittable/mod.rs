@@ -1,14 +1,16 @@
 use std::{ops::RangeInclusive, rc::Rc};
 
-mod hittable_collection;
-mod sphere;
-
 pub use hittable_collection::HittableCollection;
 pub use sphere::Sphere;
 
-use crate::material::Material;
-use crate::ray::Ray;
-use crate::vec3::{Point3, Vec3};
+use crate::{
+    material::Material,
+    ray::Ray,
+    vec3::{Point3, Vec3},
+};
+
+mod hittable_collection;
+mod sphere;
 
 /// An `HitRecord` is the result of a [`Ray`] hitting an [`Hittable`].
 pub struct HitRecord<'a> {

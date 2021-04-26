@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use super::vec3;
+use crate::vec3;
 
 /// Aliases of [`vec3::Vec3`] representing an RGB color.
 pub type Color = vec3::Vec3;

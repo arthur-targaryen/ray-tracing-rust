@@ -1,7 +1,9 @@
-use std::cmp::PartialEq;
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Range, Sub, SubAssign};
+use std::{
+    cmp::PartialEq,
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Range, Sub, SubAssign},
+};
 
-use super::random;
+use crate::random;
 
 /// A 3-dimensional vector.
 #[derive(Debug, Copy, Clone)]

@@ -1,8 +1,6 @@
-use super::Material;
+use crate::{color::Color, hittable::HitRecord, ray::Ray};
 
-use crate::color::Color;
-use crate::hittable::HitRecord;
-use crate::ray::Ray;
+use super::Material;
 
 pub struct Metal {
     pub albedo: Color,

@@ -3,11 +3,10 @@ use std::rc::Rc;
 
 use camera::Camera;
 use color::Color;
+use hittable::{HittableCollection, Sphere};
+use material::{Lambertian, Material, Metal};
 use random::*;
 use vec3::Point3;
-
-use crate::hittable::{HittableCollection, Sphere};
-use crate::material::{Lambertian, Material, Metal};
 
 mod camera;
 mod color;

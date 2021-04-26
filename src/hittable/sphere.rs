@@ -1,9 +1,8 @@
 use std::{ops::RangeInclusive, rc::Rc};
 
+use crate::{material::Material, ray::Ray, vec3::Point3};
+
 use super::{HitRecord, Hittable};
-use crate::material::Material;
-use crate::ray::Ray;
-use crate::vec3::Point3;
 
 pub struct Sphere<'a> {
     center: Point3,
@@ -61,10 +60,11 @@ impl<'a> Hittable for Sphere<'a> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use crate::color::Color;
     use crate::material::Lambertian;
     use crate::vec3::Vec3;
+
+    use super::*;
 
     #[test]
     fn try_hit_sphere_with_not_hitting_ray() {
