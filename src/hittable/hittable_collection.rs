@@ -1,8 +1,9 @@
 use std::ops::RangeInclusive;
 use std::rc::Rc;
 
-use crate::hittable::{HitRecord, Hittable};
 use crate::ray::Ray;
+
+use super::{HitRecord, Hittable};
 
 /// Stores a list of `hittable::Hittable`.
 pub struct HittableCollection {

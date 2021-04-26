@@ -1,5 +1,7 @@
-use super::ray::Ray;
-use super::vec3::{Point3, Vec3};
+use crate::{
+    ray::Ray,
+    vec3::{Point3, Vec3},
+};
 
 /// The ray tracer camera.
 ///

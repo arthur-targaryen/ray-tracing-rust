@@ -1,5 +1,9 @@
-use std::cmp::PartialEq;
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::{
+    cmp::PartialEq,
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Range, Sub, SubAssign},
+};
+
+use crate::random;
 
 /// A 3-dimensional vector.
 #[derive(Debug, Copy, Clone)]
@@ -18,7 +22,7 @@ impl Vec3 {
         Vec3 { x, y, z }
     }
 
-    /// Construct the zero vector.
+    /// Constructs the zero vector.
     ///
     /// Zero vector is a vector of length 0 and whose components are all 0.
     pub fn zero() -> Vec3 {
@@ -27,6 +31,43 @@ impl Vec3 {
             y: 0.0,
             z: 0.0,
         }
+    }
+
+    /// Constructs a random vector.
+    pub fn random() -> Vec3 {
+        Vec3 {
+            x: random::random(),
+            y: random::random(),
+            z: random::random(),
+        }
+    }
+
+    /// Constructs a random vector whose components are all in the given range.
+    pub fn random_range(range: Range<f64>) -> Vec3 {
+        Vec3 {
+            x: random::random_range(range.clone()),
+            y: random::random_range(range.clone()),
+            z: random::random_range(range),
+        }
+    }
+
+    /// Constructs a random vector inside a unit radius sphere.
+    pub fn random_in_unit_sphere() -> Vec3 {
+        let range = -1.0..1.0;
+
+        let mut vector = Vec3::random_range(range.clone());
+        while vector.length_squared() >= 1.0 {
+            vector = Vec3::random_range(range.clone());
+        }
+
+        vector
+    }
+
+    /// Constructs a normalized random vector inside a unit radius sphere.
+    ///
+    /// This is a shortcut for `Vec3::random_in_unit_sphere().normalized()`.
+    pub fn random_normalized() -> Vec3 {
+        Vec3::random_in_unit_sphere().normalized()
     }
 
     pub fn x(&self) -> f64 {
@@ -50,9 +91,33 @@ impl Vec3 {
         self.length_squared().sqrt()
     }
 
+    /// Returns true if the vector is close to zero in all dimensions.
+    pub fn is_near_zero(&self) -> bool {
+        const EPSILON: f64 = 1e-8;
+        self.x.abs() < EPSILON && self.y.abs() < EPSILON && self.z.abs() < EPSILON
+    }
+
     /// Returns the normalized vector.
     pub fn normalized(&self) -> Vec3 {
         *self / self.length()
+    }
+
+    /// Returns the reflected vector after intersecting with a surface, `n`
+    /// being the surface normal.
+    pub fn reflected(&self, n: &Vec3) -> Vec3 {
+        *self - 2.0 * self.dot(n) * *n
+    }
+
+    /// Returns the refracted vector after intersecting with a surface, `n`
+    /// being the surface normal. `eta` is the refractive index of the surface
+    /// material.
+    ///
+    /// See [Sneel's law on Wikipedia](https://en.wikipedia.org/wiki/Snell%27s_law).
+    pub fn refracted(&self, n: &Vec3, eta: f64) -> Vec3 {
+        let cos_theta = (-*self).dot(n).min(1.0);
+        let ray_out_perp = eta * (*self + cos_theta * *n);
+        let ray_out_parallel = -(1.0 - ray_out_perp.length_squared()).abs().sqrt() * *n;
+        ray_out_perp + ray_out_parallel
     }
 
     /// Returns the dot product of the vector with another.
@@ -214,10 +279,28 @@ mod test {
     }
 
     #[test]
+    fn is_near_zero_works_with_large_vec3() {
+        assert!(!Vec3::new(8.0, 8.0, 8.0).is_near_zero());
+    }
+
+    #[test]
+    fn is_near_zero_works_with_near_zero_vec3() {
+        assert!(!Vec3::new(0.0, 1e-8, 8.0).is_near_zero());
+    }
+
+    #[test]
     fn normalized_works() {
         assert_eq!(
             Vec3::new(4.0, 2.0, 4.0).normalized(),
             Vec3::new(4.0 / 6.0, 2.0 / 6.0, 4.0 / 6.0)
+        );
+    }
+
+    #[test]
+    fn reflected_works() {
+        assert_eq!(
+            Vec3::new(2.0, -2.0, 0.0).reflected(&Vec3::new(0.0, 1.0, 0.0)),
+            Vec3::new(2.0, 2.0, 0.0)
         );
     }
 
