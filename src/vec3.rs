@@ -108,6 +108,18 @@ impl Vec3 {
         *self - 2.0 * self.dot(n) * *n
     }
 
+    /// Returns the refracted vector after intersecting with a surface, `n`
+    /// being the surface normal. `eta` is the refractive index of the surface
+    /// material.
+    ///
+    /// See [Sneel's law on Wikipedia](https://en.wikipedia.org/wiki/Snell%27s_law).
+    pub fn refract(&self, n: &Vec3, eta: f64) -> Vec3 {
+        let cos_theta = (-*self).dot(n).min(1.0);
+        let ray_out_perp = eta * (*self + cos_theta * *n);
+        let ray_out_parallel = -(1.0 - ray_out_perp.length_squared()).abs().sqrt() * *n;
+        ray_out_perp + ray_out_parallel
+    }
+
     /// Returns the dot product of the vector with another.
     /// See [dot product on Wikipedia](https://en.wikipedia.org/wiki/Dot_product).
     pub fn dot(&self, &rhs: &Vec3) -> f64 {
