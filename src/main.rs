@@ -48,6 +48,11 @@ fn main() {
         Rc::clone(&material_left) as Rc<dyn Material>,
     )));
     world.add(Rc::new(Sphere::new(
+        Point3::new(-1.0, 0.0, -1.0),
+        -0.4,
+        Rc::clone(&material_left) as Rc<dyn Material>,
+    )));
+    world.add(Rc::new(Sphere::new(
         Point3::new(1.0, 0.0, -1.0),
         0.5,
         Rc::clone(&material_right) as Rc<dyn Material>,
