@@ -1,13 +1,11 @@
-use crate::camera::Camera;
-use crate::color::Color;
-use crate::hittable::Hittable;
-use crate::perf::ThreadPool;
-use crate::random;
-use std::io::Write;
-
-use std::sync::{Arc, Mutex};
+use std::{
+    io::Write,
+    sync::{Arc, Mutex},
+};
 
 use progressing::{mapping::Bar as MappingBar, Baring};
+
+use crate::{camera::Camera, color::Color, hittable::Hittable, perf::ThreadPool, random};
 
 /// A ray-traced image.
 ///

@@ -1,9 +1,10 @@
+use std::sync::Arc;
+
 use crate::{
     color::Color,
     hittable::Hittable,
     vec3::{Point3, Vec3},
 };
-use std::sync::Arc;
 
 pub struct Ray {
     origin: Point3,

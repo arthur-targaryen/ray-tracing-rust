@@ -1,5 +1,4 @@
-use std::ops::RangeInclusive;
-use std::sync::Arc;
+use std::{ops::RangeInclusive, sync::Arc};
 
 use crate::ray::Ray;
 

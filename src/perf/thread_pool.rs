@@ -1,5 +1,7 @@
-use std::sync::{mpsc, Arc, Mutex};
-use std::thread;
+use std::{
+    sync::{mpsc, Arc, Mutex},
+    thread,
+};
 
 /// A group of spawned threads that are waiting and ready to handle a task.
 pub struct ThreadPool {
