@@ -9,6 +9,10 @@ use std::sync::{Arc, Mutex};
 
 use progressing::{mapping::Bar as MappingBar, Baring};
 
+/// A ray-traced image.
+///
+/// In order to render the image use [`Image::render`] and then [`Image::write`]
+/// to write it to a writer.
 pub struct Image {
     camera: Arc<Camera>,
     image_width: usize,
@@ -20,6 +24,10 @@ pub struct Image {
 }
 
 impl Image {
+    /// Constructs a new [`Image`].
+    ///
+    /// [`Image::image_height`] is constructed from the `image_width` and
+    /// `aspect_ratio`.
     pub fn new(
         camera: Camera,
         aspect_ratio: f64,
@@ -40,6 +48,16 @@ impl Image {
         }
     }
 
+    /// Renders an image using multiple threads.
+    ///
+    /// [`Image::write`] should be called when render finish to write it to a
+    /// writer.
+    ///
+    /// Returns a reference to `self` to allow method chaining.
+    ///
+    /// # Panics
+    ///
+    /// The `write` function will panic if the `threads` is zero.
     pub fn render(&mut self, threads: usize) -> &Self {
         let mut pool = ThreadPool::new(threads);
 
@@ -98,7 +116,10 @@ impl Image {
         self
     }
 
+    /// Writes an image in PPM format to the provided `stream`.
     pub fn write(&self, stream: &mut dyn Write) -> std::io::Result<()> {
+        // TODO: Change self.pixels to an optional to panic when writting
+        // None.
         eprintln!("\nWritting image...");
 
         writeln!(

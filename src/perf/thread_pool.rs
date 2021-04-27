@@ -1,6 +1,7 @@
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
 
+/// A group of spawned threads that are waiting and ready to handle a task.
 pub struct ThreadPool {
     workers: Vec<Worker>,
     sender: mpsc::Sender<Message>,
@@ -14,6 +15,13 @@ enum Message {
 }
 
 impl ThreadPool {
+    /// Constructs a new ThreadPool.
+    ///
+    /// The size is the number of threads in the pool.
+    ///
+    /// # Panics
+    ///
+    /// The `new` function will panic if the size is zero.
     pub fn new(size: usize) -> ThreadPool {
         assert!(size > 0);
 
@@ -30,6 +38,8 @@ impl ThreadPool {
         ThreadPool { workers, sender }
     }
 
+    /// Sends a job to be executed to the thread pool. As soon as a thread is
+    /// available, the job will be executed.
     pub fn execute<F>(&self, f: F)
     where
         F: FnOnce() + Send + 'static,
@@ -39,6 +49,7 @@ impl ThreadPool {
         self.sender.send(Message::NewJob(job)).unwrap();
     }
 
+    /// Waits for all jobs to be completed. The threads will then be joined.
     pub fn wait_all_jobs(&mut self) {
         for _ in &self.workers {
             self.sender.send(Message::Terminate).unwrap();

@@ -5,7 +5,6 @@ use crate::{
 };
 use std::sync::Arc;
 
-#[derive(Debug)]
 pub struct Ray {
     origin: Point3,
     direction: Vec3,
@@ -28,7 +27,7 @@ impl Ray {
     }
 
     /// Returns the 3D position along the vector ; `t` is the distance from the
-    /// [`origin`].
+    /// [`Ray::origin`].
     pub fn at(&self, t: f64) -> Point3 {
         self.origin + t * self.direction
     }

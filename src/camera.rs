@@ -20,9 +20,6 @@ pub struct Camera {
 
 impl Camera {
     /// Constructs a new `Camera`.
-    ///
-    /// The aspect ratio is 16:9, the viewport height is 2.0 and the focal
-    /// length is 1.0. Camera center is at the origin (0, 0, 0).
     pub fn new(
         look_from: Point3,
         look_at: Point3,
@@ -44,6 +41,7 @@ impl Camera {
         let origin = look_from;
         let horizontal = focus_distance * viewport_width * u;
         let vertical = focus_distance * viewport_height * v;
+
         Camera {
             origin,
             lower_left_corner: origin - horizontal / 2.0 - vertical / 2.0 - focus_distance * w,
@@ -56,7 +54,7 @@ impl Camera {
         }
     }
 
-    /// Return a ray going from the camera origin to the X and Y coordinates
+    /// Returns a ray going from the camera origin to the X and Y coordinates
     /// represented by `s` and `t`.
     ///
     /// `s` and `t` are two coefficient making two offset vectors along the

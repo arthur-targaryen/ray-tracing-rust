@@ -6,7 +6,7 @@ use crate::vec3;
 pub type Color = vec3::Vec3;
 
 impl Color {
-    /// Write a single pixel's color out to a writer.
+    /// Writes a single pixel's color out to a writer.
     ///
     /// The color is the sum of multiple samples, thus this function will
     /// scale the color and clamp it to an RGB value.

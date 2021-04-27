@@ -22,6 +22,13 @@ mod random;
 mod ray;
 mod vec3;
 
+/// Creates a random scene. Returns an [`Arc`] of [`Hittable`].
+///
+/// The scene contains multiple sheres of multiple materials (glass, metal and
+/// diffuse).
+///
+/// The scene come from [chapter 13](https://raytracing.github.io/books/RayTracingInOneWeekend.html#wherenext?/afinalrender)
+/// of *Ray Tracing in One Weekend*.
 fn random_scene() -> Arc<dyn Hittable + Sync + Send> {
     let mut world = HittableCollection::new();
 
