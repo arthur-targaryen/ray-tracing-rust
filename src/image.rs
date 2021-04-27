@@ -28,7 +28,7 @@ impl Image {
         max_depth: usize,
         world: Arc<dyn Hittable + Send + Sync>,
     ) -> Image {
-        let image_height = image_width / aspect_ratio as usize;
+        let image_height = (image_width as f64 / aspect_ratio as f64) as usize;
         Image {
             camera: Arc::new(camera),
             image_width,
