@@ -38,7 +38,7 @@ impl Ray {
     /// This will try to hit anything in the `world`.
     /// If nothing can be hit, returns a blue-to-white gradient depending on ray
     /// Y coordinate.
-    pub fn color(&self, world: &Arc<dyn Hittable + Send + Sync>, depth: u32) -> Color {
+    pub fn color(&self, world: &Arc<dyn Hittable + Send + Sync>, depth: usize) -> Color {
         if depth == 0 {
             return Color::zero();
         }

@@ -10,7 +10,7 @@ impl Color {
     ///
     /// The color is the sum of multiple samples, thus this function will
     /// scale the color and clamp it to an RGB value.
-    pub fn write(&self, mut stream: impl Write, samples_per_pixel: u32) -> std::io::Result<()> {
+    pub fn write(&self, stream: &mut dyn Write, samples_per_pixel: usize) -> std::io::Result<()> {
         let r = self.x();
         let g = self.y();
         let b = self.z();

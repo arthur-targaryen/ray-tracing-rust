@@ -1,21 +1,21 @@
 use std::{
-    f64, io,
-    sync::{Arc, Mutex},
+    f64,
+    io::{self, Write},
+    sync::Arc,
 };
-
-use progressing::{mapping::Bar as MappingBar, Baring};
 
 use camera::Camera;
 use color::Color;
 use hittable::{Hittable, HittableCollection, Sphere};
+use image::Image;
 use material::{Dielectrics, Lambertian, Material, Metal};
-use perf::ThreadPool;
 use random::*;
 use vec3::{Point3, Vec3};
 
 mod camera;
 mod color;
 mod hittable;
+mod image;
 mod material;
 mod perf;
 mod random;
@@ -79,88 +79,43 @@ fn random_scene() -> Arc<dyn Hittable + Sync + Send> {
 }
 
 fn main() {
-    // Image
-    let aspect_ratio = 3.0 / 2.0;
-    let image_width = 1200;
-    let image_height = (image_width as f64 / aspect_ratio) as i32;
-    let samples_per_pixel: u32 = 500;
-    let max_depth = 50;
-
     // World
     let world = random_scene();
 
     // Camera
+    let aspect_ratio = 3.0 / 2.0;
     let look_from = Point3::new(13.0, 2.0, 3.0);
     let look_at = Point3::zero();
     let vup = Vec3::new(0.0, 1.0, 0.0);
     let dist_to_focus = 10.0;
     let aperture = 0.1;
-    let camera = Arc::new(Camera::new(
+    let fov = 20.0;
+    let camera = Camera::new(
         look_from,
         look_at,
         vup,
-        20.0,
+        fov,
         aspect_ratio,
         aperture,
         dist_to_focus,
-    ));
+    );
+
+    // Image
+    let image_width = 1200;
+    let samples_per_pixel = 500;
+    let max_depth = 50;
+    let mut image = Image::new(
+        camera,
+        aspect_ratio,
+        image_width,
+        samples_per_pixel,
+        max_depth,
+        world,
+    );
 
     // Render
-
-    let mut pool = ThreadPool::new(10);
-
-    let image = vec![Color::zero(); (image_width * image_height) as usize];
-    let image = Arc::new(Mutex::new(image));
-
-    let mut progress_bar = MappingBar::with_range(0, image_height as usize).timed();
-    progress_bar.set_len(20);
-    eprintln!("{}", progress_bar);
-    let progress_bar = Arc::new(Mutex::new(progress_bar));
-
-    for j in (0..image_height).rev() {
-        let progress_bar = Arc::clone(&progress_bar);
-        let world = Arc::clone(&world);
-        let image = Arc::clone(&image);
-        let camera = Arc::clone(&camera);
-        pool.execute(move || {
-            let mut chunk = Vec::with_capacity(image_width as usize);
-            for i in 0..image_width {
-                let mut pixel_color = Color::zero();
-
-                for _ in 0..samples_per_pixel {
-                    let u = (i as f64 + random()) / (image_width - 1) as f64;
-                    let v = (j as f64 + random()) / (image_height - 1) as f64;
-                    let r = camera.ray_to(u, v);
-                    pixel_color += r.color(&world, max_depth);
-                }
-
-                chunk.push(pixel_color);
-            }
-
-            let mut image = image.lock().unwrap();
-            chunk.into_iter().enumerate().for_each(|(index, pixel)| {
-                image[((image_height as usize - j as usize - 1) * image_width as usize + index)] =
-                    pixel;
-            });
-
-            let mut progress_bar = progress_bar.lock().unwrap();
-            progress_bar.add(true);
-            if progress_bar.has_progressed_significantly() {
-                progress_bar.remember_significant_progress();
-                eprintln!("{}", progress_bar);
-            }
-        });
-    }
-
-    pool.wait_all_jobs();
-
-    eprintln!("\nWritting image...");
-    println!("P3\n{} {}\n255", image_width, image_height);
-    for pixel in image.lock().unwrap().iter() {
-        pixel
-            .write(io::stdout(), samples_per_pixel)
-            .expect("There was an error trying to write the image to the standard output");
-    }
-
-    eprintln!("Done!");
+    image
+        .render(10)
+        .write(&mut io::stdout() as &mut dyn Write)
+        .expect("There was an error trying to write the image to the standard output");
 }
