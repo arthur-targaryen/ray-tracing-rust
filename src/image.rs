@@ -18,7 +18,7 @@ pub struct Image {
     samples_per_pixel: usize,
     max_depth: usize,
     world: Arc<dyn Hittable + Send + Sync>,
-    pixels: Vec<Color>,
+    pixels: Option<Vec<Color>>,
 }
 
 impl Image {
@@ -42,7 +42,7 @@ impl Image {
             samples_per_pixel,
             max_depth,
             world,
-            pixels: vec![Color::zero(); image_width * image_height],
+            pixels: None,
         }
     }
 
@@ -61,7 +61,10 @@ impl Image {
 
         eprintln!("Rendering with {} thread(s)", threads);
 
-        let pixels = Arc::new(Mutex::new(self.pixels.clone()));
+        let pixels = Arc::new(Mutex::new(vec![
+            Color::zero();
+            self.image_width * self.image_height
+        ]));
 
         let mut progress_bar =
             MappingBar::with_range(0, self.image_width * self.image_height).timed();
@@ -111,15 +114,18 @@ impl Image {
 
         pool.wait_all_jobs();
 
-        self.pixels = pixels.lock().unwrap().clone();
+        self.pixels = Some(pixels.lock().unwrap().clone());
 
         self
     }
 
     /// Writes an image in PPM format to the provided `stream`.
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if [`Image::pixels`] is `None`, i.e.
+    /// [`Image::render`] has not been called before.
     pub fn write(&self, stream: &mut dyn Write) -> std::io::Result<()> {
-        // TODO: Change self.pixels to an optional to panic when writting
-        // None.
         eprintln!("\nWritting image...");
 
         writeln!(
@@ -128,7 +134,7 @@ impl Image {
             self.image_width, self.image_height
         )?;
 
-        for pixel in &self.pixels {
+        for pixel in self.pixels.as_ref().unwrap() {
             pixel.write(stream, self.samples_per_pixel)?;
         }
 
