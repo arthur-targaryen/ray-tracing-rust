@@ -3,6 +3,8 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+use progressing::{mapping::Bar as MappingBar, Baring};
+
 use camera::Camera;
 use color::Color;
 use hittable::{Hittable, HittableCollection, Sphere};
@@ -104,16 +106,19 @@ fn main() {
     ));
 
     // Render
-    println!("P3\n{} {}\n255", image_width, image_height);
 
     let mut pool = ThreadPool::new(10);
 
     let image = vec![Color::zero(); (image_width * image_height) as usize];
     let image = Arc::new(Mutex::new(image));
 
-    let remaining = Arc::new(Mutex::new(image_height));
+    let mut progress_bar = MappingBar::with_range(0, image_height as usize).timed();
+    progress_bar.set_len(20);
+    eprintln!("{}", progress_bar);
+    let progress_bar = Arc::new(Mutex::new(progress_bar));
+
     for j in (0..image_height).rev() {
-        let remaining = Arc::clone(&remaining);
+        let progress_bar = Arc::clone(&progress_bar);
         let world = Arc::clone(&world);
         let image = Arc::clone(&image);
         let camera = Arc::clone(&camera);
@@ -138,15 +143,19 @@ fn main() {
                     pixel;
             });
 
-            let mut remaining = remaining.lock().unwrap();
-            *remaining -= 1;
-            eprint!("\rScanlines remaining: {} ", remaining);
+            let mut progress_bar = progress_bar.lock().unwrap();
+            progress_bar.add(true);
+            if progress_bar.has_progressed_significantly() {
+                progress_bar.remember_significant_progress();
+                eprintln!("{}", progress_bar);
+            }
         });
     }
 
     pool.wait_all_jobs();
 
     eprintln!("\nWritting image...");
+    println!("P3\n{} {}\n255", image_width, image_height);
     for pixel in image.lock().unwrap().iter() {
         pixel
             .write(io::stdout(), samples_per_pixel)
