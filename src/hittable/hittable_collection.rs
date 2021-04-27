@@ -1,5 +1,5 @@
 use std::ops::RangeInclusive;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::ray::Ray;
 
@@ -7,7 +7,7 @@ use super::{HitRecord, Hittable};
 
 /// Stores a list of `hittable::Hittable`.
 pub struct HittableCollection {
-    objects: Vec<Rc<dyn Hittable>>,
+    objects: Vec<Arc<dyn Hittable + Sync + Send>>,
 }
 
 impl HittableCollection {
@@ -19,7 +19,7 @@ impl HittableCollection {
     }
 
     /// Adds an element to the collection.
-    pub fn add(&mut self, elem: Rc<dyn Hittable>) {
+    pub fn add(&mut self, elem: Arc<dyn Hittable + Sync + Send>) {
         self.objects.push(elem);
     }
 

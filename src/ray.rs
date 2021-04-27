@@ -3,6 +3,7 @@ use crate::{
     hittable::Hittable,
     vec3::{Point3, Vec3},
 };
+use std::sync::Arc;
 
 #[derive(Debug)]
 pub struct Ray {
@@ -37,7 +38,7 @@ impl Ray {
     /// This will try to hit anything in the `world`.
     /// If nothing can be hit, returns a blue-to-white gradient depending on ray
     /// Y coordinate.
-    pub fn color(&self, world: &dyn Hittable, depth: u32) -> Color {
+    pub fn color(&self, world: &Arc<dyn Hittable + Send + Sync>, depth: u32) -> Color {
         if depth == 0 {
             return Color::zero();
         }

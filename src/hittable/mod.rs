@@ -1,4 +1,4 @@
-use std::{ops::RangeInclusive, rc::Rc};
+use std::{ops::RangeInclusive, sync::Arc};
 
 pub use hittable_collection::HittableCollection;
 pub use sphere::Sphere;
@@ -13,7 +13,7 @@ mod hittable_collection;
 mod sphere;
 
 /// An `HitRecord` is the result of a [`Ray`] hitting an [`Hittable`].
-pub struct HitRecord<'a> {
+pub struct HitRecord {
     /// The point where the intersecting ray meets the hittable.
     pub intersection_point: Point3,
     /// The distance between the point of intersection and the intersecting ray
@@ -26,10 +26,10 @@ pub struct HitRecord<'a> {
     /// [`HitRecord::front_face`] is `true`) or the inside.
     pub front_face: bool,
     /// The material of the hit face.
-    pub material: Rc<dyn Material + 'a>,
+    pub material: Arc<dyn Material + Sync + Send + 'static>,
 }
 
-impl<'a> HitRecord<'a> {
+impl HitRecord {
     /// Constructs a new `HitRecord`.
     ///
     /// The record is the intersection between the `hitting_ray`, at `t` from
@@ -42,8 +42,8 @@ impl<'a> HitRecord<'a> {
         hitting_ray: &Ray,
         t: f64,
         outward_normal: Vec3,
-        material: Rc<dyn Material + 'a>,
-    ) -> HitRecord<'a> {
+        material: Arc<dyn Material + Sync + Send + 'static>,
+    ) -> HitRecord {
         let front_face = hitting_ray.direction().dot(&outward_normal) < 0.0;
         let normal = if front_face {
             outward_normal
