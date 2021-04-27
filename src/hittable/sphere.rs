@@ -4,19 +4,19 @@ use crate::{material::Material, ray::Ray, vec3::Point3};
 
 use super::{HitRecord, Hittable};
 
-pub struct Sphere {
+pub struct Sphere<'a> {
     center: Point3,
     radius: f64,
-    pub material: Arc<dyn Material + Sync + Send + 'static>,
+    pub material: Arc<dyn Material + Sync + Send + 'a>,
 }
 
-impl Sphere {
+impl<'a> Sphere<'a> {
     /// Constructs a new `Sphere`.
     pub fn new(
         center: Point3,
         radius: f64,
-        material: Arc<dyn Material + Sync + Send + 'static>,
-    ) -> Sphere {
+        material: Arc<dyn Material + Sync + Send + 'a>,
+    ) -> Sphere<'a> {
         Sphere {
             center,
             radius,
@@ -25,7 +25,7 @@ impl Sphere {
     }
 }
 
-impl Hittable for Sphere {
+impl<'a> Hittable for Sphere<'a> {
     /// Tries to hit a sphere with a ray. The intersection point must be in the
     /// `valid_range`.
     /// See [Line-sphere intersection on Wikipedia](https://en.wikipedia.org/wiki/Line–sphere_intersection).
