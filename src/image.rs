@@ -45,7 +45,8 @@ impl Image {
 
         let pixels = Arc::new(Mutex::new(self.pixels.clone()));
 
-        let mut progress_bar = MappingBar::with_range(0, self.image_height).timed();
+        let mut progress_bar =
+            MappingBar::with_range(0, self.image_width * self.image_height).timed();
         progress_bar.set_len(20);
         eprintln!("{}", progress_bar);
         let progress_bar = Arc::new(Mutex::new(progress_bar));
@@ -82,7 +83,7 @@ impl Image {
                 });
 
                 let mut progress_bar = progress_bar.lock().unwrap();
-                progress_bar.add(true);
+                progress_bar.add(image_width);
                 if progress_bar.has_progressed_significantly() {
                     progress_bar.remember_significant_progress();
                     eprintln!("{}", progress_bar);
