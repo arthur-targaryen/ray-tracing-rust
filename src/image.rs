@@ -59,6 +59,8 @@ impl Image {
     pub fn render(&mut self, threads: usize) -> &Self {
         let mut pool = ThreadPool::new(threads);
 
+        eprintln!("Rendering with {} thread(s)", threads);
+
         let pixels = Arc::new(Mutex::new(self.pixels.clone()));
 
         let mut progress_bar =

@@ -1,5 +1,5 @@
 use std::{
-    f64,
+    env, f64,
     io::{self, Write},
     sync::Arc,
 };
@@ -85,7 +85,19 @@ fn random_scene() -> Arc<dyn Hittable + Sync + Send> {
     Arc::new(world)
 }
 
+const THREADS_AMOUNT_VARIABLE: &str = "THREADS_AMOUNT";
+
 fn main() {
+    let threads_amount: usize = match env::var(THREADS_AMOUNT_VARIABLE) {
+        Ok(var) => var.trim().parse().unwrap_or_else(|_| {
+            panic!(
+                "Unexpected {} environment variable format",
+                THREADS_AMOUNT_VARIABLE
+            )
+        }),
+        Err(_) => 1,
+    };
+
     // World
     let world = random_scene();
 
@@ -122,7 +134,7 @@ fn main() {
 
     // Render
     image
-        .render(10)
+        .render(threads_amount)
         .write(&mut io::stdout() as &mut dyn Write)
         .expect("There was an error trying to write the image to the standard output");
 }
