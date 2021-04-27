@@ -63,6 +63,26 @@ impl Vec3 {
         vector
     }
 
+    /// Constructs a random vector inside a unit radius disk.
+    pub fn random_in_unit_disk() -> Vec3 {
+        let range = -1.0..1.0;
+
+        let mut vector = Vec3::new(
+            random::random_range(range.clone()),
+            random::random_range(range.clone()),
+            0.0,
+        );
+        while vector.length_squared() >= 1.0 {
+            vector = Vec3::new(
+                random::random_range(range.clone()),
+                random::random_range(range.clone()),
+                0.0,
+            );
+        }
+
+        vector
+    }
+
     /// Constructs a normalized random vector inside a unit radius sphere.
     ///
     /// This is a shortcut for `Vec3::random_in_unit_sphere().normalized()`.
