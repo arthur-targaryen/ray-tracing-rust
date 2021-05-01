@@ -1,8 +1,13 @@
-use std::{f64, io, rc::Rc};
+use std::{
+    env, f64,
+    io::{self, Write},
+    sync::Arc,
+};
 
 use camera::Camera;
 use color::Color;
-use hittable::{HittableCollection, Sphere};
+use hittable::{Hittable, HittableCollection, Sphere};
+use image::Image;
 use material::{Dielectrics, Lambertian, Material, Metal};
 use random::*;
 use vec3::{Point3, Vec3};
@@ -10,19 +15,28 @@ use vec3::{Point3, Vec3};
 mod camera;
 mod color;
 mod hittable;
+mod image;
 mod material;
+mod perf;
 mod random;
 mod ray;
 mod vec3;
 
-fn random_scene() -> HittableCollection {
+/// Creates a random scene. Returns an [`Arc`] of [`Hittable`].
+///
+/// The scene contains multiple sheres of multiple materials (glass, metal and
+/// diffuse).
+///
+/// The scene come from [chapter 13](https://raytracing.github.io/books/RayTracingInOneWeekend.html#wherenext?/afinalrender)
+/// of *Ray Tracing in One Weekend*.
+fn random_scene() -> Arc<dyn Hittable + Sync + Send> {
     let mut world = HittableCollection::new();
 
-    let ground_material = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
-    world.add(Rc::new(Sphere::new(
+    let ground_material = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    world.add(Arc::new(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
-        Rc::clone(&ground_material) as Rc<dyn Material>,
+        Arc::clone(&ground_material) as Arc<dyn Material + Sync + Send>,
     )));
 
     for a in -11..11 {
@@ -33,91 +47,94 @@ fn random_scene() -> HittableCollection {
             if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
                 let sphere_material = if choose_mat < 0.8 {
                     let albedo = Color::random() * Color::random();
-                    Rc::new(Lambertian::new(albedo)) as Rc<dyn Material>
+                    Arc::new(Lambertian::new(albedo)) as Arc<dyn Material + Sync + Send>
                 } else if choose_mat < 0.95 {
                     let albedo = Color::random_range(0.5..1.0);
                     let fuzz = random_range(0.0..0.5);
-                    Rc::new(Metal::new(albedo, fuzz)) as Rc<dyn Material>
+                    Arc::new(Metal::new(albedo, fuzz)) as Arc<dyn Material + Sync + Send>
                 } else {
-                    Rc::new(Dielectrics::new(1.5)) as Rc<dyn Material>
+                    Arc::new(Dielectrics::new(1.5)) as Arc<dyn Material + Sync + Send>
                 };
 
-                world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
             }
         }
     }
 
-    let material = Rc::new(Dielectrics::new(1.5));
-    world.add(Rc::new(Sphere::new(
+    let material = Arc::new(Dielectrics::new(1.5));
+    world.add(Arc::new(Sphere::new(
         Point3::new(0.0, 1.0, 0.0),
         1.0,
         material,
     )));
 
-    let material = Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Rc::new(Sphere::new(
+    let material = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+    world.add(Arc::new(Sphere::new(
         Point3::new(-4.0, 1.0, 0.0),
         1.0,
         material,
     )));
 
-    let material = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
-    world.add(Rc::new(Sphere::new(
+    let material = Arc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Arc::new(Sphere::new(
         Point3::new(4.0, 1.0, 0.0),
         1.0,
         material,
     )));
 
-    world
+    Arc::new(world)
 }
 
+const THREADS_AMOUNT_VARIABLE: &str = "THREADS_AMOUNT";
+
 fn main() {
-    // Image
-    let aspect_ratio = 3.0 / 2.0;
-    let image_width = 1200;
-    let image_height = (image_width as f64 / aspect_ratio) as i32;
-    let samples_per_pixel: u32 = 500;
-    let max_depth = 50;
+    let threads_amount: usize = match env::var(THREADS_AMOUNT_VARIABLE) {
+        Ok(var) => var.trim().parse().unwrap_or_else(|_| {
+            panic!(
+                "Unexpected {} environment variable format",
+                THREADS_AMOUNT_VARIABLE
+            )
+        }),
+        Err(_) => 1,
+    };
 
     // World
     let world = random_scene();
 
     // Camera
+    let aspect_ratio = 3.0 / 2.0;
     let look_from = Point3::new(13.0, 2.0, 3.0);
     let look_at = Point3::zero();
     let vup = Vec3::new(0.0, 1.0, 0.0);
     let dist_to_focus = 10.0;
     let aperture = 0.1;
+    let fov = 20.0;
     let camera = Camera::new(
         look_from,
         look_at,
         vup,
-        20.0,
+        fov,
         aspect_ratio,
         aperture,
         dist_to_focus,
     );
 
+    // Image
+    let image_width = 1200;
+    let samples_per_pixel = 500;
+    let max_depth = 50;
+    let mut image = Image::new(
+        camera,
+        aspect_ratio,
+        image_width,
+        samples_per_pixel,
+        max_depth,
+        world,
+    );
+
     // Render
-    println!("P3\n{} {}\n255", image_width, image_height);
-
-    for j in (0..image_height).rev() {
-        eprint!("\rScanlines remaining: {} ", j);
-        for i in 0..image_width {
-            let mut pixel_color = Color::zero();
-
-            for _ in 0..samples_per_pixel {
-                let u = (i as f64 + random()) / (image_width - 1) as f64;
-                let v = (j as f64 + random()) / (image_height - 1) as f64;
-                let r = camera.ray_to(u, v);
-                pixel_color += r.color(&world, max_depth);
-            }
-
-            pixel_color
-                .write(io::stdout(), samples_per_pixel)
-                .expect("There was an error trying to write the image to the standard output");
-        }
-    }
-
-    eprintln!("\nDone!");
+    image
+        .render(threads_amount)
+        .write(&mut io::stdout() as &mut dyn Write)
+        .expect("There was an error trying to write the image to the standard output");
 }

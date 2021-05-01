@@ -1,10 +1,11 @@
+use std::sync::Arc;
+
 use crate::{
     color::Color,
     hittable::Hittable,
     vec3::{Point3, Vec3},
 };
 
-#[derive(Debug)]
 pub struct Ray {
     origin: Point3,
     direction: Vec3,
@@ -27,7 +28,7 @@ impl Ray {
     }
 
     /// Returns the 3D position along the vector ; `t` is the distance from the
-    /// [`origin`].
+    /// [`Ray::origin`].
     pub fn at(&self, t: f64) -> Point3 {
         self.origin + t * self.direction
     }
@@ -37,7 +38,7 @@ impl Ray {
     /// This will try to hit anything in the `world`.
     /// If nothing can be hit, returns a blue-to-white gradient depending on ray
     /// Y coordinate.
-    pub fn color(&self, world: &dyn Hittable, depth: u32) -> Color {
+    pub fn color(&self, world: &Arc<dyn Hittable + Send + Sync>, depth: usize) -> Color {
         if depth == 0 {
             return Color::zero();
         }

@@ -1,4 +1,4 @@
-use std::{ops::RangeInclusive, rc::Rc};
+use std::{ops::RangeInclusive, sync::Arc};
 
 pub use hittable_collection::HittableCollection;
 pub use sphere::Sphere;
@@ -26,7 +26,7 @@ pub struct HitRecord<'a> {
     /// [`HitRecord::front_face`] is `true`) or the inside.
     pub front_face: bool,
     /// The material of the hit face.
-    pub material: Rc<dyn Material + 'a>,
+    pub material: Arc<dyn Material + Sync + Send + 'a>,
 }
 
 impl<'a> HitRecord<'a> {
@@ -42,7 +42,7 @@ impl<'a> HitRecord<'a> {
         hitting_ray: &Ray,
         t: f64,
         outward_normal: Vec3,
-        material: Rc<dyn Material + 'a>,
+        material: Arc<dyn Material + Sync + Send + 'a>,
     ) -> HitRecord<'a> {
         let front_face = hitting_ray.direction().dot(&outward_normal) < 0.0;
         let normal = if front_face {

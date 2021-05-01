@@ -1,4 +1,4 @@
-use std::{ops::RangeInclusive, rc::Rc};
+use std::{ops::RangeInclusive, sync::Arc};
 
 use crate::{material::Material, ray::Ray, vec3::Point3};
 
@@ -7,12 +7,16 @@ use super::{HitRecord, Hittable};
 pub struct Sphere<'a> {
     center: Point3,
     radius: f64,
-    pub material: Rc<dyn Material + 'a>,
+    pub material: Arc<dyn Material + Sync + Send + 'a>,
 }
 
 impl<'a> Sphere<'a> {
     /// Constructs a new `Sphere`.
-    pub fn new(center: Point3, radius: f64, material: Rc<dyn Material + 'a>) -> Sphere<'a> {
+    pub fn new(
+        center: Point3,
+        radius: f64,
+        material: Arc<dyn Material + Sync + Send + 'a>,
+    ) -> Sphere<'a> {
         Sphere {
             center,
             radius,
@@ -53,7 +57,7 @@ impl<'a> Hittable for Sphere<'a> {
             ray,
             root,
             (ray.at(root) - self.center) / self.radius,
-            Rc::clone(&self.material),
+            Arc::clone(&self.material),
         ))
     }
 }
@@ -68,11 +72,11 @@ mod test {
 
     #[test]
     fn try_hit_sphere_with_not_hitting_ray() {
-        let material = Rc::new(Lambertian::new(Color::zero()));
+        let material = Arc::new(Lambertian::new(Color::zero()));
         let sphere = Sphere::new(
             Point3::new(1.0, 1.0, 1.0),
             0.5,
-            Rc::clone(&material) as Rc<dyn Material>,
+            Arc::clone(&material) as Arc<dyn Material + Send + Sync>,
         );
         let ray = Ray::new(Point3::new(-1.0, -1.0, -1.0), Vec3::new(-1.0, -1.0, -1.0));
 
@@ -81,11 +85,11 @@ mod test {
 
     #[test]
     fn try_hit_sphere_with_hitting_ray_not_in_range() {
-        let material = Rc::new(Lambertian::new(Color::zero()));
+        let material = Arc::new(Lambertian::new(Color::zero()));
         let sphere = Sphere::new(
             Point3::new(3.0, 0.0, 0.0),
             1.0,
-            Rc::clone(&material) as Rc<dyn Material>,
+            Arc::clone(&material) as Arc<dyn Material + Send + Sync>,
         );
         let ray = Ray::new(Point3::new(1.0, 0.0, 0.0), Vec3::new(1.0, 0.0, 0.0));
 
@@ -94,11 +98,11 @@ mod test {
 
     #[test]
     fn try_hit_sphere_with_hitting_ray_in_range() {
-        let material = Rc::new(Lambertian::new(Color::zero()));
+        let material = Arc::new(Lambertian::new(Color::zero()));
         let sphere = Sphere::new(
             Point3::new(3.0, 0.0, 0.0),
             1.0,
-            Rc::clone(&material) as Rc<dyn Material>,
+            Arc::clone(&material) as Arc<dyn Material + Send + Sync>,
         );
         let ray = Ray::new(Point3::new(1.0, 0.0, 0.0), Vec3::new(1.0, 0.0, 0.0));
 
